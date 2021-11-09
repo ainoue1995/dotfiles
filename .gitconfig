@@ -1,0 +1,12 @@
+[core]
+	editor = emacs
+[user]
+	name = ainoue1995
+	email = inoueakio@terakoyapro.net
+[pull]
+	rebase = false
+[alias]
+	cmt = commit
+	co = checkout
+	pl = pull -p
+	lg = !git log --all --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative
