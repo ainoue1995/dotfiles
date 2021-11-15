@@ -285,7 +285,5 @@ path=(
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
   /Library/Apple/usr/bin
-  /.nodebrew/current/bin
+  $HOME/.nodebrew/current/bin
 )
-
-
