@@ -22,12 +22,6 @@ SAVEHIST=1000000
 # 1行表示
 # PROMPT="aki%~ %# "
 # 2行表示
-# PROMPT="%{${bg[blue]}%}[%n@%m]%{${reset_color}%} %~
-# %# "
-
-#PROMPT=%F{magenta}%n%f:[%B%m%b]@%F{48}%~%f
-#%# "
-
 PROMPT="%F{213}%m%f %F{magenta}%W%f %F{39}%*%f @%K{cyan}%F{black}%~%f%k
 %# "
 
@@ -42,7 +36,6 @@ zstyle ':zle:*' word-style unspecified
 ########################################
 # 補完
 # 補完機能を有効にする
-completion
 
 # 補完で小文字でも大文字にマッチさせる
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
@@ -51,8 +44,8 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 zstyle ':completion:*' ignore-parents parent pwd ..
 
 # sudo の後ろでコマンド名を補完する
-zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
-  /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
+#zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
+#  /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
 
 ########################################
 # vcs_info
@@ -127,6 +120,8 @@ bindkey '^R' history-incremental-pattern-search-backward
 ########################################
 # エイリアス
 
+# lsのカラー
+export LSCOLORS=cxfxcxdxbxegedabagacad
 alias la='ls -a'
 alias ll='ls -la'
 
@@ -278,3 +273,19 @@ elif type compctl &>/dev/null; then
   compctl -K _npm_completion npm
 fi
 ###-end-npm-completion-###
+
+typeset -U path PATH
+path=(
+  /opt/homebrew/bin(N-/)
+  /opt/homebrew/sbin(N-/)
+  /usr/bin
+  /usr/sbin
+  /bin
+  /sbin
+  /usr/local/bin(N-/)
+  /usr/local/sbin(N-/)
+  /Library/Apple/usr/bin
+  /.nodebrew/current/bin
+)
+
+
