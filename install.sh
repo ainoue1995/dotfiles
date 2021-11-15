@@ -5,6 +5,9 @@ set -eu
 # 実行場所のディレクトリを取得
 THIS_DIR=$HOME/dotfiles
 
+# ロゼッタのインストール
+sudo softwareupdate --install-rosetta
+
 if [ ! -d "$THIS_DIR" ]; then
     git clone https://github.com/ainoue1995/dotfiles.git "$THIS_DIR"
 else
