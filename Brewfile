@@ -1,6 +1,5 @@
 cask_args appdir: '/Applications'
 
-tap "google-chrome"
 tap "adoptopenjdk/openjdk"
 tap "aws/tap"
 tap "homebrew/bundle"
@@ -27,6 +26,7 @@ brew "zsh-autosuggestions"
 brew "sanemat/font/ricty"
 cask "soundflower"
 cask "bettertouchtool"
+cask "google-chrome"
 cask "zoom"
 cask "flux"
 cask "iterm2"
