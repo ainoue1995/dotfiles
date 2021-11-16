@@ -49,6 +49,7 @@ cask "alfred"
 cask "google-cloud-sdk"
 cask "michaelvillar-timer"
 cask "ngrok"
+cask "onyx"
 
 mas "Display menu", id: 549083868
 mas "Amphetamine", id: 937984704
