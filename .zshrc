@@ -1,10 +1,38 @@
-# 少し凝った zshrc
-# License : MIT
-# http://mollifier.mit-license.org/
-
 ########################################
 # 環境変数
 export LANG=ja_JP.UTF-8
+
+########################################
+
+
+# git-promptの読み込み
+source ~/.zsh/completion/git-prompt.sh
+zstyle ':completion:*:*:git:*' script ~/.zsh/completion/git-completion.bash
+
+# プロンプトのオプション表示設定
+GIT_PS1_SHOWDIRTYSTATE=true
+GIT_PS1_SHOWUNTRACKEDFILES=true
+GIT_PS1_SHOWSTASHSTATE=true
+GIT_PS1_SHOWUPSTREAM=auto
+
+# プロンプトの表示設定(好きなようにカスタマイズ可)
+setopt PROMPT_SUBST
+PS1='%F{green}%n@%m%f: %F{cyan}%~%f %F{red}$(__git_ps1 "(%s)")%f
+\$ '
+
+# 補完で小文字でも大文字にマッチさせる
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+
+# ../ の後は今いるディレクトリを補完しない
+zstyle ':completion:*' ignore-parents parent pwd ..
+
+# デフォルトでメニュー補完するが、rmの引数のときにはメニュー補完をしない
+zstyle ':completion:*' menu true
+zstyle ':completion:*:rm:*' menu false
+
+# sudo の後ろでコマンド名を補完する
+#zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
+#  /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
 
 # 色を使用出来るようにする
 autoload -Uz colors
@@ -22,8 +50,36 @@ SAVEHIST=1000000
 # 1行表示
 # PROMPT="aki%~ %# "
 # 2行表示
-PROMPT="%F{213}%m%f %F{magenta}%W%f %F{39}%*%f @%K{cyan}%F{black}%~%f%k
-%# "
+# PROMPT="%F{213}%m%f %F{magenta}%W%f %F{39}%*%f @%K{cyan}%F{black}%~%f%k
+# %# "
+
+function left-prompt {
+  name_t='126m%}'            # user name text clolr
+  name_b='000m%}'            # user name background color
+  path_t='255m%}'            # path text clolr
+  path_b='031m%}'            # path background color
+  arrow='228m%}'             # arrow color
+  text_color='%{\e[38;5;'    # set text color
+  back_color='%{\e[30;48;5;' # set background color
+  reset='%{\e[0m%}'          # reset
+  sharp="\uE0B0"             # triangle
+
+  user="${back_color}${name_b}${text_color}${name_t}"
+  dir="${back_color}${path_b}${text_color}${path_t}"
+  echo "${user}%n%#@%m${back_color}${path_b}${text_color}${name_b}${sharp} ${dir}%~${reset}${text_color}${path_b}${sharp}${reset}\n${text_color}${arrow}> ${reset}"
+}
+
+PROMPT=$(left-prompt)
+
+function precmd() {
+  # Print a newline before the prompt, unless it's the
+  # first prompt in the process.
+  if [ -z "$NEW_LINE_BEFORE_PROMPT" ]; then
+    NEW_LINE_BEFORE_PROMPT=1
+  elif [ "$NEW_LINE_BEFORE_PROMPT" -eq 1 ]; then
+    echo ""
+  fi
+}
 
 # 単語の区切り文字を指定する
 autoload -Uz select-word-style
@@ -32,20 +88,6 @@ select-word-style default
 # / も区切りと扱うので、^W でディレクトリ１つ分を削除できる
 zstyle ':zle:*' word-chars " /=;@:{},|"
 zstyle ':zle:*' word-style unspecified
-
-########################################
-# 補完
-# 補完機能を有効にする
-
-# 補完で小文字でも大文字にマッチさせる
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
-# ../ の後は今いるディレクトリを補完しない
-zstyle ':completion:*' ignore-parents parent pwd ..
-
-# sudo の後ろでコマンド名を補完する
-#zstyle ':completion:*:sudo:*' command-path /usr/local/sbin /usr/local/bin \
-#  /usr/sbin /usr/bin /sbin /bin /usr/X11R6/bin
 
 ########################################
 # vcs_info
@@ -60,13 +102,6 @@ function _update_vcs_info_msg() {
   RPROMPT="${vcs_info_msg_0_}"
 }
 add-zsh-hook precmd _update_vcs_info_msg
-
-if type brew &>/dev/null; then
-  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
-
-  autoload -Uz compinit
-  compinit
-fi
 
 ########################################
 # オプション
@@ -115,21 +150,29 @@ setopt +o nomatch
 # キーバインド
 
 # ^R で履歴検索をするときに * でワイルドカードを使用出来るようにする
-bindkey '^R' history-incremental-pattern-search-backward
+# bindkey '^R' history-incremental-pattern-search-backward
 
 ########################################
 # エイリアス
 
 # lsのカラー
-export LSCOLORS=cxfxcxdxbxegedabagacad
-alias la='ls -a'
-alias ll='ls -la'
+export CLICOLOR=1
+export LSCOLORS=gxfxxxxxcxxxxxxxxxgxgx
+
+alias ls='ls -G'
+alias ll='ls -laG'
+alias la='ls -lG'
 
 alias rm='rm -i'
 alias cp='cp -i'
 alias mv='mv -i'
 
 alias mkdir='mkdir -p'
+
+alias dcp='docker-compose ps'
+alias dcu='docker-compose up -d'
+alias dcd='docker-compose down'
+alias dcs='docker-compose stop'
 
 # sudo の後のコマンドでエイリアスを有効にする
 alias sudo='sudo '
@@ -274,10 +317,55 @@ elif type compctl &>/dev/null; then
 fi
 ###-end-npm-completion-###
 
+# peco settings
+# 過去に実行したコマンドを選択。ctrl-uにバインド
+function peco-select-history() {
+  BUFFER=$(\history -n -r 1 | peco --query "$LBUFFER")
+  CURSOR=$#BUFFER
+  zle clear-screen
+}
+zle -N peco-select-history
+bindkey '^u' peco-select-history
+
+# search a destination from cdr list
+function peco-get-destination-from-cdr() {
+  cdr -l |
+    sed -e 's/^[[:digit:]]*[[:blank:]]*//' |
+    peco --query "$LBUFFER"
+}
+
+# # Ctrl+x -> Ctrl+b
+# # peco でGitブランチを表示して切替え
+# bindkey '^b' anyframe-widget-checkout-git-branch
+# zle -N anyframe-widget-checkout-git-branch
+
+# ブランチを簡単切り替え。git checkout lbで実行できる
+alias -g lb='`git branch | peco --prompt "GIT BRANCH>" | head -n 1 | sed -e "s/^\*\s*//g"`'
+
+# dockerコンテナに入る。deで実行できる
+alias de='docker exec -it $(docker ps | peco | cut -d " " -f 1) /bin/bash'
+
 typeset -U path PATH
+export N_PREFIX=$HOME/.n
+
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# 補完
+# 補完機能を有効にする
+
+if type brew &>/dev/null; then
+  FPATH=$(brew --prefix)/share/zsh-completions:$FPATH
+  FPATH=~/.zsh/completion:$FPATH
+
+  autoload -Uz compinit
+  compinit
+fi
+
 path=(
   /opt/homebrew/bin(N-/)
   /opt/homebrew/sbin(N-/)
+  /opt/homebrew/opt/curl/bin
+  /opt/homebrew/opt/openjdk/bin
   /usr/bin
   /usr/sbin
   /bin
@@ -285,5 +373,5 @@ path=(
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
   /Library/Apple/usr/bin
-  $HOME/.nodebrew/current/bin
+  $N_PREFIX/bin
 )
