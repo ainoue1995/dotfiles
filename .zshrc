@@ -373,5 +373,11 @@ path=(
   /usr/local/bin(N-/)
   /usr/local/sbin(N-/)
   /Library/Apple/usr/bin
+  /usr/local/go/bin
+  $HOME/.goenv
+  $GOENV_ROOT/bin
   $N_PREFIX/bin
 )
+
+# go lang setting
+eval "$(goenv init -)"
