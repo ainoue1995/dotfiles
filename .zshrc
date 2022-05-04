@@ -169,7 +169,9 @@ alias mv='mv -i'
 
 alias mkdir='mkdir -p'
 
+alias dc='docker-compose'
 alias dcp='docker-compose ps'
+alias dcud='docker-compose up -d'
 alias dcu='docker-compose up -d'
 alias dcd='docker-compose down'
 alias dcs='docker-compose stop'
