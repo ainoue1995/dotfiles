@@ -1,5 +1,5 @@
 [core]
-	editor = emacs
+	editor = vim
 	excludesfile = /Users/aki/.gitignore
 [user]
 	name = ainoue1995
