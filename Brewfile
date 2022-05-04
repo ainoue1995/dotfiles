@@ -25,6 +25,7 @@ brew "zsh-completions"
 brew "zsh-syntax-highlighting"
 brew "zsh-autosuggestions"
 brew "sanemat/font/ricty"
+brew "gh"
 cask "soundflower"
 cask "bettertouchtool"
 cask "google-chrome"
@@ -51,9 +52,12 @@ cask "google-cloud-sdk"
 cask "michaelvillar-timer"
 cask "ngrok"
 cask "onyx"
+cask "thunder"
+cask "expressvpn"
+cask "grammarly-desktop"
+cask "4k-video-downloader"
 
 mas "Display menu", id: 549083868
 mas "Amphetamine", id: 937984704
-mas "RunCat", id: 1429033973
 mas "Reeder 5", id: 1529448980
 mas "Spark", id: 1176895641
