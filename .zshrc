@@ -320,14 +320,24 @@ fi
 ###-end-npm-completion-###
 
 # peco settings
-# 過去に実行したコマンドを選択。ctrl-uにバインド
+# 過去に実行したコマンドを選択。ctrl-hにバインド
 function peco-select-history() {
   BUFFER=$(\history -nr 1 | peco --query "$LBUFFER")
   CURSOR=$#BUFFER
   zle clear-screen
 }
 zle -N peco-select-history
-bindkey '^u' peco-select-history
+bindkey '^h' peco-select-history
+
+# peco delete merged git branch
+function peco-git-delete-branch () {
+  local selected_branch=$(git branch --merged | grep -v "*" | peco --query "$LBUFFER" | tr -d ' ')
+  if [ -n "$selected_branch" ]; then
+    git branch -d $selected_branch
+  fi
+}
+zle -N peco-git-delete-branch
+bindkey '^d' peco-git-delete-branch
 
 # search a destination from cdr list
 function peco-get-destination-from-cdr() {
@@ -383,3 +393,5 @@ path=(
 
 # go lang setting
 eval "$(goenv init -)"
+eval "$(starship init zsh)"
+
