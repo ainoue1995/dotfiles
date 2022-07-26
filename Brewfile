@@ -61,3 +61,4 @@ mas "Display menu", id: 549083868
 mas "Amphetamine", id: 937984704
 mas "Reeder 5", id: 1529448980
 mas "Spark", id: 1176895641
+mas "LINE", id: 539883307
